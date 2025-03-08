@@ -1,53 +1,35 @@
 package com.project.account_service.Model;
 
 import lombok.*;
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Entity
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "accounts")
+@Document(collection = "accounts")
 public class Account {
 
     @Id
-    @Column(unique = true, nullable = false, length = 12)
-    private String accountNumber;
+    private String accountNumber; // Unique ID for MongoDB
 
-    @Enumerated(EnumType.STRING)
     private AccountType accountType;
-
-    @Column(nullable = false)
     private Double balance;
-
     private Long userId;
-
-    @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
-    @CreationTimestamp
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    public void generateAccountNumber() {
-        if (this.accountNumber == null) {
-            this.accountNumber = generateRandomAccountNumber();
-        }
-    }
-
-    private String generateRandomAccountNumber(){
-       return String.format("%012d", new Random().nextLong(1_000_000_000_000L));
-//        return String.valueOf(ThreadLocalRandom.current().nextLong(100_000_000_000L, 1_000_000_000_000L));
-    }
 
 }
